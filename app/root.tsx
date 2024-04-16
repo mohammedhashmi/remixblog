@@ -1,11 +1,15 @@
 import {
   Links,
+  Link,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   LiveReload,
 } from "@remix-run/react";
+import globalStyles from "~/styles/global.css";
+
+export const links = () => [{ rel: "stylesheet", href: globalStyles }];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,6 +21,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <nav className="navbar">
+          <Link to="/" className="logo">
+            Remix
+          </Link>
+          <ul>
+            <li>
+              <Link to="/posts">Posts</Link>
+            </li>
+          </ul>
+        </nav>
         {children}
         <ScrollRestoration />
         <Scripts />
