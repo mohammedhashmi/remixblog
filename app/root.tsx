@@ -5,7 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  LiveReload,
+  useRouteError,
 } from "@remix-run/react";
 import globalStyles from "~/styles/global.css";
 
@@ -37,7 +37,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
         <ScrollRestoration />
         <Scripts />
-        {process.env.NODE_ENV === "development" && <LiveReload />}
       </body>
     </html>
   );
@@ -45,4 +44,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return <Outlet />;
+}
+
+export function ErrorBoundary() {
+  const error: any = useRouteError();
+  console.error(error);
+  return (
+    <>
+      <h1 className="error">{error.message}</h1>
+    </>
+  );
 }
