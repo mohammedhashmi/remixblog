@@ -1,19 +1,27 @@
 import { redirect } from "@remix-run/react";
 import { ActionFunctionArgs } from "@remix-run/node";
+import { z } from 'zod';
 import { db }  from '~/utils/db.server';
+
+const postSchema = z.object({
+  title: z.string().min(3),
+  body: z.string().min(10)
+})
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const form = await request.formData();
   const data = Object.fromEntries(form);
-  const insert = await db.post.create(
-    {
-      data: {
-        title: data.title as string,
-        body: data.body as string}
-    }
-  );
-  console.log('inserted data', insert)
-  return redirect(`/posts/${insert.id}`);
+  try {
+    const validatedData = postSchema.parse(data);
+    const insert = await db.post.create (
+      {
+        data: validatedData
+      }
+    );
+    return redirect(`/posts/${insert.id}`);
+  } catch(error) {
+    throw error
+  }
 };
 
 function NewPost() {
