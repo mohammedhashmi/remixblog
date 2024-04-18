@@ -8,7 +8,6 @@ import {
   useRouteError,
 } from "@remix-run/react";
 
-
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -27,6 +26,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <li>
               <Link to="/posts">Posts</Link>
             </li>
+            <li>
+              <Link to="/auth/login">Login</Link>
+            </li>
+
             <li>
               <Link to="/posts/new">New Post</Link>
             </li>
