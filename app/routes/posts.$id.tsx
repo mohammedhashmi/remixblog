@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, redirect } from "@remix-run/react";
 import { db }  from '~/utils/db.server';
 
 export interface Post {
@@ -18,12 +18,19 @@ export const loader = async ({ params }: any) => {
   return data;
 }
 
-export const action = async ({ request }: any) => {
+export const action = async ({ request, params }: any) => {
   const form = await request.formData();
   if (form.get('_method') === 'delete') {
-    const id = form.get('id');
-    console.log(id);
-    return id;
+    const post = await db.post.findUnique({
+      where: {
+        id: params.id
+      }
+    })
+    if (!post)  throw new Error('post not found');
+
+    await db.post.delete({ where: {id: post.id} })
+    console.log(post)
+    return redirect('/posts');
   }
   return false
 }
