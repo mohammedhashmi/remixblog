@@ -1,12 +1,19 @@
 import { redirect } from "@remix-run/react";
 import { ActionFunctionArgs } from "@remix-run/node";
+import { db }  from '~/utils/db.server';
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const form = await request.formData();
-  const { title, body } = Object.fromEntries(form);
-  console.log("new title", title);
-  console.log("new post body", body);
-  return redirect("/posts");
+  const data = Object.fromEntries(form);
+  const insert = await db.post.create(
+    {
+      data: {
+        title: data.title as string,
+        body: data.body as string}
+    }
+  );
+  console.log('inserted data', insert)
+  return redirect(`/posts/${insert.id}`);
 };
 
 function NewPost() {

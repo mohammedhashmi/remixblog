@@ -7,9 +7,7 @@ import {
   ScrollRestoration,
   useRouteError,
 } from "@remix-run/react";
-import globalStyles from "~/styles/global.css";
 
-export const links = () => [{ rel: "stylesheet", href: globalStyles }];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
