@@ -1,26 +1,33 @@
 import { redirect } from "@remix-run/react";
 import { ActionFunctionArgs } from "@remix-run/node";
-import { z } from 'zod';
-import { db }  from '~/utils/db.server';
+import { z } from "zod";
+import { db } from "~/utils/db.server";
 
 const postSchema = z.object({
   title: z.string().min(3),
-  body: z.string().min(10)
-})
+  body: z.string().min(10),
+});
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const form = await request.formData();
   const data = Object.fromEntries(form);
   try {
     const validatedData = postSchema.parse(data);
-    const insert = await db.post.create (
-      {
-        data: validatedData
-      }
-    );
+    const user = await db.user.findFirst({
+      where: {
+        username: "hashmi",
+      },
+    });
+    if (!user) throw new Error("user not found");
+    const insert = await db.post.create({
+      data: {
+        ...validatedData,
+        userId: user?.id as string,
+      },
+    });
     return redirect(`/posts/${insert.id}`);
-  } catch(error) {
-    throw error
+  } catch (error) {
+    throw error;
   }
 };
 

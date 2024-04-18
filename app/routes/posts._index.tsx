@@ -8,23 +8,32 @@ interface Post {
 }
 
 export const loader = async () => {
-  const data = { posts: await db.post.findMany({take: 20}) };
+  const data = {
+    posts: await db.post.findMany({
+      include: {
+        user: true,
+      },
+      take: 20,
+    }),
+  };
   return data;
-}
+};
 
 function PostsItems() {
   const { posts } = useLoaderData() as { posts: Post[] };
   return (
     <>
       <h1>Posts</h1>
-      {posts && posts.map((post: Post) => (
-        <div key={post.id}>
-          <Link to={post.id}>
-          <h3>{post.title}</h3>
-          <p>{post.body}</p>
-          </Link>
-        </div>
-      ))}
+      {posts &&
+        posts.map((post: Post) => (
+          <div key={post.id}>
+            <Link to={post.id}>
+              <h3>post title: {post.title}</h3>
+              <h4>username: {post.user.username}</h4>
+              <p>post body: {post.body}</p>
+            </Link>
+          </div>
+        ))}
     </>
   );
 }
