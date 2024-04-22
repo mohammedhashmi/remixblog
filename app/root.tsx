@@ -7,16 +7,6 @@ import {
   ScrollRestoration,
   useRouteError,
 } from "@remix-run/react";
-import { globalStyles } from "~/styles/global.css";
-
-export function links() {
-  return [
-    {
-      rel: "stylesheet",
-      href: globalStyles,
-    },
-  ];
-}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (

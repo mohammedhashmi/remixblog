@@ -1,16 +1,26 @@
 import { redirect, json } from "@remix-run/react";
 import { db } from "~/utils/db.server";
-import { login, register } from "~/utils/sessions.server";
+import { login, register } from "~/utils/session.server";
 
 export const action = async ({ request }: any) => {
   const form = await request.formData();
   const loginType = form.get("loginType");
-  const username = form.get("username");
-  const password = form.get("password");
+  const username: string = form.get("username");
+  const password: string = form.get("password");
   const fields = { loginType, username, password };
+  if (!loginType) {
+    throw new Error("Login type is required");
+  }
   switch (loginType) {
     case "Login":
       const user = await login({ username, password });
+      console.log("the user which I got is", JSON.stringify(user));
+      if (!user) {
+        return json({
+          status: 400,
+          message: "Invalid username or password",
+        });
+      }
       // create user session
       break;
     case "Register":
@@ -20,7 +30,8 @@ export const action = async ({ request }: any) => {
       // create user session
       break;
     default:
-      throw new Error(`Login type is not supported`, { fields });
+      console.error("Login type is not supported");
+      throw new Error(`Login type is not supported`);
   }
   console.log(fields);
   redirect("/posts");
@@ -34,7 +45,12 @@ function LoginIndex() {
           <fieldset>
             <legend>Login or Register</legend>
             <label>
-              <input type="radio" name="loginType" value="Login" />
+              <input
+                type="radio"
+                name="loginType"
+                value="Login"
+                defaultChecked={true}
+              />
               Login
             </label>
             <label>
